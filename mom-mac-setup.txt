@@ -1,0 +1,29 @@
+ASSISTANT LAB — MOM'S MAC (no Command Line Tools)
+=================================================
+
+STEP 1 — Install Python (Safari, not Terminal)
+  https://www.python.org/downloads/
+  Click the big yellow "Download Python" button.
+  Open the downloaded file → Continue → Install (password OK).
+
+STEP 2 — Download the game (Safari)
+  https://github.com/OwendoyalAdastra-lang/assistant-lab/archive/refs/heads/main.zip
+  Double-click the zip to unzip → folder "assistant-lab-main"
+
+STEP 3 — Play (double-click, no typing)
+  In the assistant-lab-main folder, double-click:
+    mom-mac-play.command
+
+  First time Mac may say "unidentified developer":
+    Right-click mom-mac-play.command → Open → Open
+
+That's it. The game window opens. Click START BUILDING.
+
+---
+If double-click does not work, open Terminal ONCE and paste:
+
+  cd ~/Downloads/assistant-lab-main
+  chmod +x mom-mac-play.command
+  ./mom-mac-play.command
+
+Solo play — no server, no Command Line Tools, no Host Key.
