@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+*.pyo
+.Python
+venv/
+agy_env/
+game-env/
+mc_env/
+.env
+assistant_lab_save.json
+assistant_lab_chat_log.json
+assistant_lab_pending_grants.json
+# Owner-only tools — never publish
+assistant_lab_admin.py
+assistant_lab_admin_client.py
+assistant_lab_admin_remote.py
+owner-run-server.sh
+*.local
+.env
