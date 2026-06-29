@@ -17,10 +17,11 @@ MULTIPLAYER (with Owen)
      assistant-lab-owner/family-host.sh
    He will give you an IP address (like 100.115.92.196)
 
-2. On mom's Mac, open mom-server-address.txt in TextEdit
-   Delete 127.0.0.1 and type Owen's IP → Save
+2. Double-click: mom-mac-multiplayer.command
+   (first time it asks for Owen's IP — type the number he texts you)
 
-3. Double-click: mom-mac-multiplayer.command
+   OR make the file yourself: TextEdit → New → type Owen's IP →
+   Save As "mom-server-address.txt" in the game folder (assistant-lab-main)
 
 4. In the game press C for chat, T for trade, L for Social Lab
 
