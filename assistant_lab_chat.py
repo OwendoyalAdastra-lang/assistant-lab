@@ -72,8 +72,11 @@ class ChatClient:
             self.last_error = str(exc)
             self._emit({
                 "type": "error",
-                "text": f"Could not connect to chat server ({self.host}:{self.port}). "
-                        f"Run: python3 assistant_lab_chat_server.py",
+                "text": (
+                    f"No chat server at {self.host}:{self.port}. "
+                    "Solo play works without it. For chat, open another Terminal and run: "
+                    "./run.sh server"
+                ),
             })
             self.disconnect()
             return False

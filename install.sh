@@ -33,11 +33,12 @@ done
 
 chmod +x "$INSTALL_DIR/run.sh"
 
-echo "Installing Python dependency (pygame)..."
-python3 -m pip install -r "$INSTALL_DIR/requirements.txt" --user
+echo "Installing Python dependency (pygame) into .venv ..."
+python3 -m venv "$INSTALL_DIR/.venv"
+"$INSTALL_DIR/.venv/bin/pip" install -r "$INSTALL_DIR/requirements.txt"
 
 echo ""
 echo "Done! Run:"
 echo "  cd $INSTALL_DIR"
-echo "  ./run.sh server   # terminal 1 — multiplayer chat"
-echo "  ./run.sh game     # terminal 2 — play"
+echo "  ./run.sh game           # play (solo — no server needed)"
+echo "  ./run.sh server         # optional — chat on this Mac only"

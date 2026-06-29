@@ -83,10 +83,18 @@ def authorize_server_start(bind_host: str) -> tuple[bool, str]:
     token = get_host_token()
     if not token:
         return False, (
-            "Public servers need a verified host key.\n"
-            "  1. Verify your email at the Assistant Lab Host Portal\n"
+            "This is a PUBLIC server (0.0.0.0) — it needs a verified Host Key.\n"
+            "\n"
+            "Just playing solo on this computer? You do NOT need this. Use:\n"
+            "  ./run.sh server\n"
+            "(starts on 127.0.0.1 — no key needed)\n"
+            "\n"
+            "Hosting for others on Wi-Fi / internet:\n"
+            "  1. Verify email at the Host Portal\n"
             "  2. Copy your Host Key\n"
-            "  3. Run: ASSISTANT_LAB_HOST_TOKEN=your_key ./run.sh server\n"
-            f"  Portal: {get_portal_url()}"
+            "  3. ASSISTANT_LAB_HOST_TOKEN=your_key ./run.sh server-lan\n"
+            f"  Portal: {get_portal_url()}\n"
+            "\n"
+            "Lab owner (you): use assistant-lab-owner/owner-run-server.sh instead."
         )
     return validate_host_token(token)

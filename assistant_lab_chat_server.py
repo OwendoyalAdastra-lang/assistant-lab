@@ -198,8 +198,10 @@ def main() -> int:
 
     ok, auth_msg = authorize_server_start(args.host)
     if not ok:
-        print("Cannot start chat server:")
+        print("")
+        print("=== Chat server did not start ===")
         print(auth_msg)
+        print("")
         return 1
     if auth_msg:
         print(auth_msg)
@@ -207,11 +209,16 @@ def main() -> int:
     try:
         server = ThreadedTCPServer((args.host, args.port), ChatClientHandler)
     except OSError as exc:
-        if exc.errno == 98:
+        if exc.errno in (98, 48):  # Linux EADDRINUSE, macOS EADDRINUSE
+            print("")
+            print("=== Chat server did not start ===")
             print(f"Port {args.port} is already in use.")
-            print("Another chat server is probably still running. Try:")
-            print("  pkill -f assistant_lab_chat_server.py")
-            print(f"Or start on a different port: python3 assistant_lab_chat_server.py --port {args.port + 1}")
+            print("")
+            print("Another chat server is probably still running.")
+            print("  macOS/Linux: pkill -f assistant_lab_chat_server.py")
+            print("  Or close the other Terminal window running the server.")
+            print(f"  Or use another port: ./run.sh server-lan  # then edit --port {args.port + 1}")
+            print("")
             return 1
         raise
 
