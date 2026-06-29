@@ -49,7 +49,7 @@ ASSISTANT_LAB_HOST_TOKEN=your_key_here ./run.sh server
 
 Host keys let you run chat/trade/Social Lab — **not** admin (no free credits or items).
 
-**Lab owner** runs the official server with owner tools separately (not distributed in this repo).
+**Lab owner** uses the private `assistant-lab-owner/` folder on their machine only — never published to GitHub.
 
 ## Repo
 
