@@ -1,0 +1,44 @@
+ASSISTANT LAB — MOM'S iMAC
+No Command Line Tools. No .command files.
+
+WHAT YOU NEED FIRST (Safari only)
+---------------------------------
+1. Python: https://www.python.org/downloads/
+   Click yellow Download → open installer → Install
+
+2. Game zip: https://github.com/OwendoyalAdastra-lang/assistant-lab/archive/refs/heads/main.zip
+   Double-click zip → folder "assistant-lab-main"
+
+PLAY (Terminal — Terminal is NOT Command Line Tools)
+----------------------------------------------------
+Open: Finder → Applications → Utilities → Terminal
+
+Copy/paste these lines ONE AT A TIME (press Enter after each):
+
+  cd ~/Downloads/assistant-lab-main
+
+  python3 launch.py
+
+First time it installs pygame. Game window opens.
+
+MULTIPLAYER (Owen hosts)
+------------------------
+1. Owen texts you his IP number (example: 100.115.92.196)
+
+2. In Terminal:
+     cd ~/Downloads/assistant-lab-main
+     python3 launch.py
+
+3. When it asks for Server IP — type Owen's number → Enter
+
+4. In game press C for chat
+
+SAVE OWEN'S IP IN A FILE (optional)
+-----------------------------------
+TextEdit → Format → Make Plain Text (Shift+Cmd+T)
+Type ONLY the IP number. Save as:
+  mom-server-address.txt
+inside assistant-lab-main folder.
+Must be .txt NOT .rtf
+
+PLAIN TEXT CHECK: no bold, no ruler bar at top of TextEdit.
