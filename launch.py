@@ -18,7 +18,16 @@ def _ensure_pygame() -> None:
     except ImportError:
         pass
     print("Installing pygame (one time)...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "--user", "pygame"])
+    for pkg in ("pygame-ce", "pygame"):
+        try:
+            subprocess.check_call(
+                [sys.executable, "-m", "pip", "install", "--user", pkg],
+            )
+            import pygame  # noqa: F401
+            return
+        except (subprocess.CalledProcessError, ImportError):
+            print(f"Could not install {pkg}, trying next...")
+    raise SystemExit("Install failed. On Mac try: pip install pygame-ce")
 
 
 def _server_ip() -> str | None:
