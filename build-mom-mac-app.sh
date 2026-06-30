@@ -31,7 +31,9 @@ done
 # App bundle + server IP
 cp -R "mom-mac-app/Assistant Lab.app" "$OUT/"
 cp mom-mac-app/server-ip.txt "$OUT/"
+cp "mom-mac-app/Start Assistant Lab.command" "$OUT/"
 chmod +x "$OUT/Assistant Lab.app/Contents/MacOS/run"
+chmod +x "$OUT/Start Assistant Lab.command"
 
 cat > "$OUT/README-MOM.txt" << 'EOF'
 ASSISTANT LAB — Mac App
@@ -39,10 +41,11 @@ ASSISTANT LAB — Mac App
 
 1. Unzip this folder
 2. Edit server-ip.txt — put Owen's IP on line 3 (under the # comments)
-3. Double-click "Assistant Lab.app"
+3. Double-click "Start Assistant Lab.command"  (best — shows errors)
+   OR double-click "Assistant Lab.app"
 
 First time Mac may ask:
-  Right-click Assistant Lab.app → Open → Open
+  Right-click → Open → Open
 
 Chat not connecting?
   - Owen must run family-host.sh on his computer first
