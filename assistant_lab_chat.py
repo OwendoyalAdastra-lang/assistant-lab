@@ -29,7 +29,9 @@ class ChatClient:
         self.port = port
         self._sock: socket.socket | None = None
         self._thread: threading.Thread | None = None
+        self._connect_thread: threading.Thread | None = None
         self._running = False
+        self._connecting = False
         self._events: queue.Queue[dict[str, Any]] = queue.Queue()
         self.connected = False
         self.player_name = "Player"
@@ -47,6 +49,25 @@ class ChatClient:
                 break
         return out
 
+    def connect_async(self, player_name: str) -> None:
+        """Connect in background so the game UI does not freeze (Mac pinwheel)."""
+        if self.connected or self._connecting:
+            return
+        self._connecting = True
+        self._emit({
+            "type": "status",
+            "text": f"Connecting to {self.host}:{self.port}...",
+        })
+
+        def _worker() -> None:
+            try:
+                self.connect(player_name)
+            finally:
+                self._connecting = False
+
+        self._connect_thread = threading.Thread(target=_worker, daemon=True)
+        self._connect_thread.start()
+
     def connect(self, player_name: str) -> bool:
         self.disconnect()
         self.player_name = (player_name or "Player").strip()[:20] or "Player"
@@ -56,7 +77,7 @@ class ChatClient:
             return False
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(8.0)
+            sock.settimeout(3.0)
             sock.connect((self.host, self.port))
             sock.settimeout(0.5)
             self._sock = sock

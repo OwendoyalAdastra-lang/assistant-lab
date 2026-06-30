@@ -2595,13 +2595,14 @@ def toggle_chat():
     state["chat_open"] = not state.get("chat_open", False)
     if state["chat_open"]:
         state["chat_input_active"] = True
-        if not chat_client.connected:
+        if not chat_client.connected and not chat_client._connecting:
             name = state.get("player_name") or save_data.get("player_name") or "Builder"
             chat_client.host = CHAT_HOST
             chat_client.port = CHAT_PORT
-            chat_client.connect(name)
+            chat_client.connect_async(name)
     else:
         state["chat_input_active"] = False
+        state["trade_open"] = False
 
 
 def disconnect_chat():
@@ -2801,9 +2802,15 @@ def handle_chat_key(event):
     if event.type != pygame.KEYDOWN:
         return False
     if event.key == pygame.K_ESCAPE:
-        state["chat_open"] = False
+        if state.get("trade_open"):
+            state["trade_open"] = False
+            state["trade_status_msg"] = "Trade panel closed."
+        else:
+            state["chat_open"] = False
         state["chat_input_active"] = False
         return True
+    if not state.get("chat_input_active", True) or state.get("trade_open"):
+        return False
     if event.key == pygame.K_BACKSPACE:
         state["chat_input"] = state.get("chat_input", "")[:-1]
         return True
@@ -2821,6 +2828,15 @@ def handle_chat_key(event):
     return True
 
 
+def player_is_typing() -> bool:
+    """True on screens where letter keys should type text, not trigger hotkeys."""
+    if state["screen"] in ("name", "avatar_name", "design", "tags"):
+        return True
+    if state["screen"] == "shop" and state.get("shop_avatar_input_active"):
+        return True
+    return False
+
+
 def control_hints_line() -> str:
     binds = get_settings().get("keybinds", DEFAULT_KEYBINDS)
     fs = format_key_display(binds.get("fullscreen", "f11"))
@@ -2828,6 +2844,7 @@ def control_hints_line() -> str:
         f"{format_key_display(binds.get('build', 'space'))} = build  •  "
         f"{format_key_display(binds.get('world', 'l'))} = world  •  "
         f"{format_key_display(binds.get('chat', 'c'))} = chat  •  "
+        f"{format_key_display(binds.get('trade', 't'))} = trade  •  "
         f"{fs} = fullscreen  •  ESC = quit"
     )
 
@@ -3048,11 +3065,14 @@ def draw_chat_panel(surf):
 
 
 def toggle_trade():
-    if not chat_client.connected:
+    if not chat_client.connected and not chat_client._connecting:
         name = state.get("player_name") or save_data.get("player_name") or "Builder"
-        chat_client.connect(name)
+        chat_client.host = CHAT_HOST
+        chat_client.port = CHAT_PORT
+        chat_client.connect_async(name)
     state["trade_open"] = not state.get("trade_open", False)
     state["chat_open"] = True
+    state["chat_input_active"] = not state.get("trade_open", False)
     if not state["trade_open"]:
         state["trade_status_msg"] = "Trade panel closed."
 
@@ -4062,13 +4082,15 @@ def main():
                     pass
                 elif state.get("chat_open") and handle_chat_key(event):
                     pass
+                elif player_is_typing() and event.type == pygame.KEYDOWN:
+                    handle_text_input(event)
                 elif keybind_matches(event, "fullscreen", binds):
                     toggle_fullscreen()
-                elif keybind_matches(event, "settings", binds):
+                elif keybind_matches(event, "settings", binds) and not player_is_typing():
                     toggle_settings()
-                elif keybind_matches(event, "chat", binds):
+                elif keybind_matches(event, "chat", binds) and not player_is_typing():
                     toggle_chat()
-                elif keybind_matches(event, "trade", binds):
+                elif keybind_matches(event, "trade", binds) and not player_is_typing() and not state.get("chat_open"):
                     toggle_trade()
                 elif keybind_matches(event, "world", binds) and state["screen"] == "welcome":
                     enter_world()
@@ -4087,11 +4109,6 @@ def main():
                 elif event.key in (pygame.K_RETURN, pygame.K_KP_ENTER) and state["screen"] == "crate_reveal":
                     if state.get("crate_reveal_anim", 0) > 0.7:
                         state["screen"] = "shop"
-                elif state["screen"] in ("name", "avatar_name", "design", "tags"):
-                    handle_text_input(event)
-                elif state["screen"] == "shop" and state.get("shop_avatar_input_active"):
-                    handle_text_input(event)
-
             for b in list(buttons):
                 b.handle(event)
 
