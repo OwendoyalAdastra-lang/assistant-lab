@@ -1,0 +1,66 @@
+#!/bin/bash
+# Assistant Lab — double-click launcher for mom's Mac
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+APP_BUNDLE="$(cd "$SCRIPT_DIR/../.." && pwd)"
+INSTALL_DIR="$(dirname "$APP_BUNDLE")"
+cd "$INSTALL_DIR"
+
+LOG="$INSTALL_DIR/assistant-lab-last-run.log"
+exec > >(tee -a "$LOG") 2>&1
+echo "=== Assistant Lab $(date) ==="
+
+PY=""
+for candidate in \
+  python3 \
+  /Library/Frameworks/Python.framework/Versions/3.14/bin/python3 \
+  /Library/Frameworks/Python.framework/Versions/3.13/bin/python3 \
+  /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 \
+  /usr/local/bin/python3; do
+  if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c "import sys; print(sys.version)" >/dev/null 2>&1; then
+    PY="$candidate"
+    break
+  fi
+done
+
+if [[ -z "$PY" ]]; then
+  osascript -e 'display dialog "Install Python first:\nhttps://www.python.org/downloads/" buttons {"OK"} default button 1'
+  exit 1
+fi
+
+echo "Python: $PY"
+
+if ! "$PY" -c "import pygame" 2>/dev/null; then
+  echo "Installing pygame-ce..."
+  "$PY" -m pip install --user pygame-ce || "$PY" -m pip install pygame-ce
+fi
+
+SERVER_IP=""
+if [[ -f "$INSTALL_DIR/server-ip.txt" ]]; then
+  SERVER_IP=$(grep -v '^#' "$INSTALL_DIR/server-ip.txt" | head -1 | tr -d '[:space:]')
+fi
+
+if [[ -z "$SERVER_IP" || "$SERVER_IP" == "127.0.0.1" ]]; then
+  SERVER_IP=$(osascript -e 'display dialog "Owen'\''s server IP for chat multiplayer:" default answer "100.115.92.196"' -e 'text returned of result' 2>/dev/null || echo "")
+  SERVER_IP=$(echo "$SERVER_IP" | tr -d '[:space:]')
+  if [[ -n "$SERVER_IP" ]]; then
+    echo "$SERVER_IP" > "$INSTALL_DIR/server-ip.txt"
+  fi
+fi
+
+export ASSISTANT_LAB_CHAT_PORT=9876
+if [[ -n "$SERVER_IP" && "$SERVER_IP" != "127.0.0.1" ]]; then
+  export ASSISTANT_LAB_CHAT_HOST="$SERVER_IP"
+  echo "Chat server: $SERVER_IP:9876"
+else
+  echo "Solo mode (no chat server IP)"
+fi
+
+GAME="build_your_own_smart_assistant_pygame.py"
+if [[ ! -f "$GAME" ]]; then
+  osascript -e 'display dialog "Game files missing. Put Assistant Lab.app in the same folder as the game .py files." buttons {"OK"}'
+  exit 1
+fi
+
+exec "$PY" "$GAME"

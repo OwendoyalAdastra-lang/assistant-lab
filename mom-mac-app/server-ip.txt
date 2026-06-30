@@ -1,0 +1,4 @@
+# Owen's server IP for chat (one line, no spaces)
+# Example Tailscale: 100.115.92.196
+# Owen runs: assistant-lab-owner/family-host.sh
+100.115.92.196
